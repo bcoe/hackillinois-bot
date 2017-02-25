@@ -1,6 +1,6 @@
 const flip = require('flip')
 const bodyParser = require('body-parser')
-const pick = require('pick-random ')
+const pick = require('pick-random')
 const express = require('express')
 const request = require('request')
 
