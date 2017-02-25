@@ -7,15 +7,29 @@ const request = require('request')
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
-  .command('hello', 'post hello message in our slack channel', () => {}, (argv) => {
-    argv.respond('this message totes came from the hello command')
+  .command('issues', 'print all issues labeled with #hackillinois', (yargs) => {
+    yargs.option('label', {
+      alias: 'l',
+      description: 'label to list issues for',
+      default: 'hackillinois'
+    })
+  }, (argv) => {
+    // 'curl -XGET https://api.github.com/search/issues?q=label:hackillinois'
+    request.get({
+      url: `https://api.github.com/search/issues?q=label:${argv.label}&per_page=100`,
+      json: true
+    }, (err, res, obj) {
+      obj.items.forEach((item) => {
+        argv.respond('*' + item.title + '*' + ': ' + item.url)
+      })
+    })
   })
   .command('flip <text...>', 'flip text upside down', () => {}, (argv) => {
     argv.respond(flip(argv.text.join(' ')))
   })
   .demand(1)
   .help()
-  .epilog("HackIllinois Chat Bot")
+  .epilog("HackIllinois 2017 Chat Bot")
 
 const app = express()
 let logger = console
