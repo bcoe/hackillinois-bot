@@ -66,21 +66,12 @@ app.get('/', function (req, res) {
   res.send('pong')
 })
 
-// start our slack webhook server.
-module.exports = function (cb, opts) {
-  let port = process.env.PORT || 3000
-  cb = cb || function () {}
+const port = process.env.PORT || 3000
 
-  opts = opts || {}
-  if (opts.logger) logger = opts.logger
-  if (opts.port) port = opts.port
-
-  const server = app.listen(port, function (foo) {
-    if (process.env.HEROKU) keepAlive()
-    logger.info('Pirate Joe bot listening on :' + port, 'beep boop')
-    return cb(null, server)
-  })
-}
+const server = app.listen(port, function (foo) {
+  if (process.env.HEROKU) keepAlive()
+  logger.info('Pirate Joe bot listening on :' + port, 'beep boop')
+})
 
 // ping our application every 5 minutes so
 // that Heroku does not sleep it.
