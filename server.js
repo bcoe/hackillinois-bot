@@ -7,10 +7,9 @@ const request = require('request')
 const parser = require('yargs')
   .usage('/hi [command]')
   .command('hello', 'post hello message in our slack channel', () => {}, (argv) => {
-
+    argv.respond('this message totes came from the hello command')
   })
   .demand(1)
-  .strict()
   .help()
   .epilog("HackIllinois Chat Bot")
 
@@ -51,7 +50,7 @@ function buildResponder (responseUrl) {
       json: true,
       body: {
         response_type: 'in_channel',
-        text: msg
+        text: '```\n' + msg + '\n```'
       }
     }, function (err, res, body) {
       if (err) return logger.error(err)
