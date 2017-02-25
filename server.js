@@ -1,3 +1,4 @@
+const flip = require('flip')
 const bodyParser = require('body-parser')
 const express = require('express')
 const request = require('request')
@@ -8,6 +9,9 @@ const parser = require('yargs')
   .usage('/hi [command]')
   .command('hello', 'post hello message in our slack channel', () => {}, (argv) => {
     argv.respond('this message totes came from the hello command')
+  })
+  .command('flip <text...>', 'flip text upside down', () => {}, (argv) => {
+    argv.respond(flip(argv.text.join(' ')))
   })
   .demand(1)
   .help()
