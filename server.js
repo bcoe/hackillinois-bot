@@ -1,5 +1,6 @@
 const flip = require('flip')
 const bodyParser = require('body-parser')
+const pick = require('pick-random')
 const express = require('express')
 const request = require('request')
 
@@ -7,15 +8,37 @@ const request = require('request')
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
-  .command('hello', 'post hello message in our slack channel', () => {}, (argv) => {
-    argv.respond('this message totes came from the hello command')
+  .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
+    yargs
+      .option('label', {
+        alias: 'l',
+        description: 'label to list issues for',
+        default: 'hackillinois'
+      })
+      .option('count', {
+        alias: 'c',
+        description: 'how many issues should we print',
+        default: 3
+      })
+  }, (argv) => {
+    request.get({
+      url: `https://api.github.com/search/issues?q=label:${argv.label}&per_page=100`,
+      json: true,
+      headers: {
+        'user-agent': 'HackIllinois 2017'
+      }
+    }, (err, res, obj) => {
+      pick(obj.items, {count: argv.count}).forEach((item) => {
+        argv.respond('*' + item.title + '*' + ': ' + item.url)
+      })
+    })
   })
   .command('flip <text...>', 'flip text upside down', () => {}, (argv) => {
     argv.respond(flip(argv.text.join(' ')))
   })
   .demand(1)
   .help()
-  .epilog("HackIllinois Chat Bot")
+  .epilog("HackIllinois 2017 Chat Bot")
 
 const app = express()
 let logger = console
@@ -38,8 +61,8 @@ app.post('/', function (req, res) {
   context.respond = buildResponder(req.body.response_url)
   // run the yargs parser on the inbound slack command.
   parser.parse(req.body.text || '', context, (err, argv, output) => {
-    if (err) logger.error(err.message)
-    if (output) argv.respond(output)
+    if (err) logger.error('```\n' + err.message + '\n```')
+    if (output) argv.respond('```\n' + output + '\n```')
   })
 
   res.send('')
@@ -54,7 +77,7 @@ function buildResponder (responseUrl) {
       json: true,
       body: {
         response_type: 'in_channel',
-        text: '```\n' + msg + '\n```'
+        text:  msg
       }
     }, function (err, res, body) {
       if (err) return logger.error(err)
