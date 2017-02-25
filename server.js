@@ -21,7 +21,6 @@ const parser = require('yargs')
         default: 3
       })
   }, (argv) => {
-    // 'curl -XGET https://api.github.com/search/issues?q=label:hackillinois'
     request.get({
       url: `https://api.github.com/search/issues?q=label:${argv.label}&per_page=100`,
       json: true,
