@@ -31,7 +31,7 @@ const parser = require('yargs')
       }
     }, (err, res, obj) => {
       pick(obj.items.filter((item) => {return item.state === 'open'}), {count: argv.count}).forEach((item) => {
-        argv.respond('*' + item.title + '*' + ': ' + item.url)
+        argv.respond('*' + item.title + '*' + ': ' + item.url.replace('api.github.com/repos', 'www.github.com'))
       })
     })
   })
