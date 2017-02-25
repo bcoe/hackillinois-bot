@@ -37,9 +37,9 @@ const parser = require('yargs')
   .command('flip <text...>', 'flip text upside down', () => {}, (argv) => {
     argv.respond(flip(argv.text.join(' ')))
   })
-  .command('cowsay <text...>', 'Say it like a cow?', () => {}, (argv)={
+  .command('cowsay <text...>', 'Say it like a cow?', () => {}, (argv) => {
     argv.respond(cowsay.say({
-      text: argv.text.join(' '),
+      text: '```\n' + argv.text.join(' ') + '\n```',
       e: 'oO',
       t: 'U'
     }))
