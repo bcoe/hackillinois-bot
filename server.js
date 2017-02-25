@@ -1,5 +1,6 @@
 const flip = require('flip')
 const bodyParser = require('body-parser')
+const pick = require('pick-random ')
 const express = require('express')
 const request = require('request')
 
@@ -7,12 +8,18 @@ const request = require('request')
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
-  .command('issues', 'print all issues labeled with #hackillinois', (yargs) => {
-    yargs.option('label', {
-      alias: 'l',
-      description: 'label to list issues for',
-      default: 'hackillinois'
-    })
+  .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
+    yargs
+      .option('label', {
+        alias: 'l',
+        description: 'label to list issues for',
+        default: 'hackillinois'
+      })
+      .option('count', {
+        alias: 'c',
+        description: 'how many issues should we print',
+        default: 3
+      })
   }, (argv) => {
     // 'curl -XGET https://api.github.com/search/issues?q=label:hackillinois'
     request.get({
@@ -22,7 +29,7 @@ const parser = require('yargs')
         'user-agent': 'HackIllinois 2017'
       }
     }, (err, res, obj) => {
-      obj.items.forEach((item) => {
+      pick(obj.items, argv.count).forEach((item) => {
         argv.respond('*' + item.title + '*' + ': ' + item.url)
       })
     })
@@ -55,8 +62,8 @@ app.post('/', function (req, res) {
   context.respond = buildResponder(req.body.response_url)
   // run the yargs parser on the inbound slack command.
   parser.parse(req.body.text || '', context, (err, argv, output) => {
-    if (err) logger.error(err.message)
-    if (output) argv.respond(output)
+    if (err) logger.error('```\n' + err.message + '\n```')
+    if (output) argv.respond('```\n' + output + '\n```')
   })
 
   res.send('')
@@ -71,7 +78,7 @@ function buildResponder (responseUrl) {
       json: true,
       body: {
         response_type: 'in_channel',
-        text: '```\n' + msg + '\n```'
+        text:  msg
       }
     }, function (err, res, body) {
       if (err) return logger.error(err)
