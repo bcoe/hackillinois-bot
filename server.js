@@ -17,7 +17,10 @@ const parser = require('yargs')
     // 'curl -XGET https://api.github.com/search/issues?q=label:hackillinois'
     request.get({
       url: `https://api.github.com/search/issues?q=label:${argv.label}&per_page=100`,
-      json: true
+      json: true,
+      headers: {
+        'user-agent': 'HackIllinois 2017'
+      }
     }, (err, res, obj) => {
       obj.items.forEach((item) => {
         argv.respond('*' + item.title + '*' + ': ' + item.url)
