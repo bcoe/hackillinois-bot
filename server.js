@@ -46,7 +46,7 @@ const parser = require('yargs')
   })
   .demand(1)
   .help()
-  .epilog("HackIllinois 2017 Chat Bot")
+  .epilog("HackIllinois 2017 Chat Bot, Contribute Here https://github.com/bcoe/hackillinois-bot")
 
 const app = express()
 let logger = console
