@@ -38,11 +38,11 @@ const parser = require('yargs')
     argv.respond(flip(argv.text.join(' ')))
   })
   .command('cowsay <text...>', 'Say it like a cow?', () => {}, (argv) => {
-    argv.respond(cowsay.say({
-      text: '```\n' + argv.text.join(' ') + '\n```',
+    argv.respond('```\n' + cowsay.say({
+      text: argv.text.join(' '),
       e: 'oO',
       t: 'U'
-    }))
+    }) + '\n```')
   })
   .demand(1)
   .help()
