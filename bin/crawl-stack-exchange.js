@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 const eachLimit = require('async').eachLimit
 const request = require('request')
+const client = require('../lib/es-client')()
+const indexName = 'questions'
+const typeName = 'question'
+
 require('yargs')
   .option('url', {
     describe: 'url to crawl for questions',
@@ -33,15 +37,17 @@ require('yargs')
         url: createUrl(opts),
         json: true,
         gzip: true
-      }, (err, res, obj) => {
+      }, (err, res, object) => {
         console.log(res.statusCode, res.body)
         if (res && res.statusCode !== 200) err = Error('unexpected status = ', res.statusCode)
         if (err) return cb(err)
 
-        // console.log(JSON.stringify(obj, null, 2))
-
-        counter ++
-        return cb()
+        eachLimit(object.items, 2, (item, cb) => {
+          indexDocument(itemToDoc(item), cb)
+        }, function () {
+          counter ++
+          return cb()
+        })
       })
     }, (err) => {
       if (err) console.error(err.message)
@@ -51,6 +57,33 @@ require('yargs')
   .help()
   .argv
 
-function createUrl(opts) {
+function indexDocument (doc, done) {
+  console.log('indexing ', doc)
+  client.update({
+    index: indexName,
+    type: typeName,
+    id: doc.question_id,
+    body: {
+      doc: doc
+    },
+    doc_as_upsert: true
+  }, (err, response) => {
+    if (err) console.error(err)
+    else console.log(response)
+    return done()
+  })
+}
+
+function itemToDoc (item) {
+  return {
+    link: item.link,
+    title: item.title,
+    score: item.score,
+    question_id: item.question_id,
+    tags: item.tags
+  }
+}
+
+function createUrl (opts) {
   return `${opts.url}?page=${opts.page}&pagesize=${opts.pageSize}&order=desc&min=${opts.minDate}&sort=activity&accepted=True&answers=1&tagged=javascript&site=stackoverflow`
 }
