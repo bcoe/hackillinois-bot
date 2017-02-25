@@ -2,6 +2,7 @@ const flip = require('flip')
 const bodyParser = require('body-parser')
 const express = require('express')
 const request = require('request')
+const cowsay = require('cowsay')
 
 // configure the yargs instance used
 // to parse chat messages.
@@ -12,6 +13,13 @@ const parser = require('yargs')
   })
   .command('flip <text...>', 'flip text upside down', () => {}, (argv) => {
     argv.respond(flip(argv.text.join(' ')))
+  })
+  .command('cowsay <text...>', 'Say it like a cow?', () => {}, (argv)={
+    argv.respond(cowsay.say({
+      text: argv.text.join(' '),
+      e: 'oO',
+      t: 'U'
+    }))
   })
   .demand(1)
   .help()
