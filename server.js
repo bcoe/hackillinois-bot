@@ -29,7 +29,7 @@ const parser = require('yargs')
         'user-agent': 'HackIllinois 2017'
       }
     }, (err, res, obj) => {
-      pick(obj.items, argv.count).forEach((item) => {
+      pick(obj.items, {count: argv.count}).forEach((item) => {
         argv.respond('*' + item.title + '*' + ': ' + item.url)
       })
     })
