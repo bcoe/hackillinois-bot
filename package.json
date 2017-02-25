@@ -1,0 +1,17 @@
+{
+  "name": "hackillinois-bot",
+  "version": "1.0.0",
+  "description": "a bot for placing in hackillinois chat channels.",
+  "main": "server.js",
+  "scripts": {
+    "test": "nyc mocha test.js"
+  },
+  "author": "Ben Coe <ben@npmjs.com>",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
+    "request": "^2.79.0",
+    "yargs": "^7.0.0-alpha.2"
+  }
+}
