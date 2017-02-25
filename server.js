@@ -4,6 +4,7 @@ const pick = require('pick-random')
 const express = require('express')
 const request = require('request')
 const cowsay = require('cowsay')
+const cool = require('cool-ascii-faces')
 
 // configure the yargs instance used
 // to parse chat messages.
@@ -43,6 +44,9 @@ const parser = require('yargs')
       e: 'oO',
       t: 'U'
     }) + '\n```')
+  })
+  .command('asciiface', 'send a random cool ascii face', () => {}, (argv) => {
+    argv.respond(cool())
   })
   .demand(1)
   .help()
