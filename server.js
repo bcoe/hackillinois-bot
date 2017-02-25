@@ -10,6 +10,9 @@ const cool = require('cool-ascii-faces')
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
+  .command('ask <text...>', 'blah blah blah', () => {}, (argv) => {
+    argv.respond("what's the deal with therapy dogs?")
+  })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
     yargs
       .option('label', {
@@ -49,6 +52,7 @@ const parser = require('yargs')
     argv.respond(cool())
   })
   .demand(1)
+  .strict()
   .help()
   .epilog("HackIllinois 2017 Chat Bot, Contribute Here https://github.com/bcoe/hackillinois-bot")
 
