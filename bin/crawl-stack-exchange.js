@@ -10,6 +10,10 @@ require('yargs')
     describe: 'url to crawl for questions',
     default: 'https://api.stackexchange.com/2.2/search/advanced'
   })
+  .option('key', {
+    describe: 'api token for stackoverflow',
+    default: process.env.API_TOKEN
+  })
   .option('page', {
     describe: 'page to start crawling from',
     default: 1
@@ -85,5 +89,5 @@ function itemToDoc (item) {
 }
 
 function createUrl (opts) {
-  return `${opts.url}?page=${opts.page}&pagesize=${opts.pageSize}&order=desc&min=${opts.minDate}&sort=activity&accepted=True&answers=1&tagged=javascript&site=stackoverflow`
+  return `${opts.url}?key=${opts.key}&page=${opts.page}&pagesize=${opts.pageSize}&order=desc&min=${opts.minDate}&sort=activity&accepted=True&answers=1&tagged=javascript&site=stackoverflow`
 }
