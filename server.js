@@ -21,6 +21,7 @@ const parser = require('yargs')
         argv.respond(decode('\n*' + hit._source.title + '*\n' + hit._source.link + '\n'));
       })
     })
+    argv.respond('\n')
   })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
     yargs
