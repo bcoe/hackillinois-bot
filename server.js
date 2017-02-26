@@ -13,9 +13,10 @@ const searcher = require('./lib/searcher')
 const parser = require('yargs')
   .usage('/hi [command]')
   .command('ask <text...>', 'Ask a Javascript related question!', () => {}, (argv) => {
-    searcher.search('bootstrap', function(hits) {
+    searcher.search(argv.text.join(' '), function(hits) {
       hits.forEach((hit) => {
-      argv.respond('*' + hit._source.title + '*' + ': ' + hit._source.score);
+        argv.respond('*' + hit._source.title + '*\n' + hit._source.link + '\nScore: ' + hit._source.score);
+      });
     });
   })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
