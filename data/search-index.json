@@ -1,0 +1,28 @@
+{
+  "settings" : {
+    "number_of_shards" : 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "question": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "analyzer": "english"
+        },
+        "link": {
+          "type": "string",
+          "index": "no"
+        },
+        "score": {
+          "type": "integer",
+          "null_value": 0
+        },
+        "tags": {
+          "type": "string",
+          "analyzer": "english"
+        }
+      }
+    }
+  }
+}

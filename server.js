@@ -5,11 +5,24 @@ const express = require('express')
 const request = require('request')
 const cowsay = require('cowsay')
 const cool = require('cool-ascii-faces')
+const client = require('./lib/es-client')()
+const searcher = require('./lib/searcher')
+const decode = require('parse-entities')
 
 // configure the yargs instance used
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
+  .command('ask <text...>', 'Ask a Javascript related question!', () => {}, (argv) => {
+    var response = decode('_*Question: '+ argv.text.join(' ') + '*_\n\n_*Suggested StackOverflow posts:*_\n')
+    argv.respond(response)
+    searcher.search(argv.text.join(' '), function(hits) {
+      hits.forEach((hit) => {
+        argv.respond(decode('\n*' + hit._source.title + '*\n' + hit._source.link + '\n'));
+      })
+    })
+    argv.respond('\n')
+  })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
     yargs
       .option('label', {
@@ -49,6 +62,7 @@ const parser = require('yargs')
     argv.respond(cool())
   })
   .demand(1)
+  .strict()
   .help()
   .epilog("HackIllinois 2017 Chat Bot, Contribute Here https://github.com/bcoe/hackillinois-bot")
 
