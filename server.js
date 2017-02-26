@@ -5,13 +5,32 @@ const express = require('express')
 const request = require('request')
 const cowsay = require('cowsay')
 const cool = require('cool-ascii-faces')
+const client = require('./lib/es-client')()
+const slice = require('array-slice');
 
 // configure the yargs instance used
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
   .command('ask <text...>', 'blah blah blah', () => {}, (argv) => {
-    argv.respond("what's the deal with therapy dogs?")
+    console.log(argv)
+    var question = argv.text.join(' ')
+
+    client.search({
+      body: {
+        query: question,
+        sort: "score:desc"
+      }
+    }).then(function(body) {
+      console.log(body.hits.hits)
+      argv.respond('Question: ', question)
+      /* change pick to whatever picks top 5 */
+      slice(body.hits.hits, 0, 5).forEach((hit) => {
+        argv.respond('*' + hit._source.title + '*' + ': ' + hit._source.score)
+      })
+    }, function(error) {
+      console.log(error.message)
+    });
   })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
     yargs
