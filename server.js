@@ -33,7 +33,7 @@ const parser = require('yargs')
       .option('count', {
         alias: 'c',
         description: 'how many issues should we print',
-        default: 3
+        default: 5
       })
   }, (argv) => {
     request.get({
@@ -43,8 +43,8 @@ const parser = require('yargs')
         'user-agent': 'HackIllinois 2017'
       }
     }, (err, res, obj) => {
-      pick(obj.items, {count: argv.count}).forEach((item) => {
-        argv.respond('*' + item.title + '*' + ': ' + item.url)
+      pick(obj.items.filter((item) => {return item.state === 'open'}), {count: argv.count}).forEach((item) => {
+        argv.respond('*' + item.title + '*' + ': ' + item.url.replace('api.github.com/repos', 'www.github.com'))
       })
     })
   })
@@ -64,7 +64,7 @@ const parser = require('yargs')
   .demand(1)
   .strict()
   .help()
-  .epilog("HackIllinois 2017 Chat Bot, Contribute Here https://github.com/bcoe/hackillinois-bot")
+  .epilog("HackIllinois 2017 Bot *beep* *boop*, Contribute! https://github.com/bcoe/hackillinois-bot")
 
 const app = express()
 let logger = console
