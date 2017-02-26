@@ -7,18 +7,20 @@ const cowsay = require('cowsay')
 const cool = require('cool-ascii-faces')
 const client = require('./lib/es-client')()
 const searcher = require('./lib/searcher')
+const decode = require('parse-entities')
 
 // configure the yargs instance used
 // to parse chat messages.
 const parser = require('yargs')
   .usage('/hi [command]')
   .command('ask <text...>', 'Ask a Javascript related question!', () => {}, (argv) => {
-    argv.respond('Question: '+ argv.text.join(' '))
+    var response = decode('_*Question: '+ argv.text.join(' ') + '*_\n\n_*Suggested StackOverflow posts:*_\n')
+    argv.respond(response)
     searcher.search(argv.text.join(' '), function(hits) {
       hits.forEach((hit) => {
-        argv.respond('*' + hit._source.title + '*\n' + hit._source.link + '\nScore: ' + hit._source.score);
-      });
-    });
+        argv.respond(decode('\n*' + hit._source.title + '*\n' + hit._source.link + '\n'));
+      })
+    })
   })
   .command('issues', 'print issues labeled with #hackillinois', (yargs) => {
     yargs
